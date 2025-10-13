@@ -1,0 +1,6 @@
+@AgriMitra_AI_HostAddress = http://localhost:5290
+
+GET {{AgriMitra_AI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
