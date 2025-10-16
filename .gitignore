@@ -1,13 +1,12 @@
-# dependencies
+# Node.js / Expo
 node_modules/
-
-# expo
-.expo/
 dist/
+build/
+.expo/
 web-build/
 expo-env.d.ts
 
-# native
+# Native / mobile keys
 *.orig.*
 *.jks
 *.p8
@@ -15,58 +14,49 @@ expo-env.d.ts
 *.key
 *.mobileprovision
 
-# metro
+# Metro / debug
 .metro-health-check*
-
-# debug
 npm-debug.*
 yarn-debug.*
 yarn-error.*
 
-# macos
+# OS files
 .DS_Store
+Thumbs.db
+ehthumbs.db
 *.pem
 
-# local env files
-.env*.local
+# Local env files
 .env
+.env*.local
 
-# typescript
+# TypeScript
 *.tsbuildinfo
-# Visual Studio temporary files
+
+# Visual Studio / VSCode temporary files
 .vs/
+*.vsidx
 *.user
 *.suo
-*.vscode/
-*.vsidx
+.vscode/
 
 # Build results
 bin/
 obj/
 out/
 
-# Node.js (frontend)
-node_modules/
-dist/
-build/
-
 # Logs
 *.log
 
-# Environment files
-.env
-.env.local
-
-# Others
+# Database / cache
 *.db
 *.sqlite
 *.db-wal
 *.db-shm
-# Database & cache
-*.db
-*.db-shm
-*.db-wal
 *.cache
 *.g.cs
 *.Generated*
 *.AssemblyInfoInputs.cache
+
+# Python virtual environment
+.venv/
