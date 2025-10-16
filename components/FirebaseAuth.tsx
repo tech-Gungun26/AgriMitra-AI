@@ -1,284 +1,155 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  Animated,
+} from "react-native";
 
-interface FirebaseAuthProps {
+export default function FirebaseAuth({
+  onAuthSuccess,
+}: {
   onAuthSuccess: (user: any) => void;
-}
+}) {
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [fadeAnim] = useState(new Animated.Value(0));
 
-export default function FirebaseAuth({ onAuthSuccess }: FirebaseAuthProps) {
-  const [authMode, setAuthMode] = useState<'phone' | 'email'>('phone');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [email, setEmail] = useState('');
-  const [otp, setOtp] = useState('');
-  const [isOtpSent, setIsOtpSent] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  React.useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 600,
+      useNativeDriver: true,
+    }).start();
+  }, []);
 
-  const sendOtp = async () => {
-    if (authMode === 'phone' && phoneNumber.length < 10) {
-      Alert.alert('त्रुटि', 'कृपया सही फोन नंबर डालें');
-      return;
-    }
-    if (authMode === 'email' && !email.includes('@')) {
-      Alert.alert('त्रुटि', 'कृपया सही ईमेल पता डालें');
-      return;
-    }
-
-    setIsLoading(true);
-    // Simulate Firebase OTP sending
-    setTimeout(() => {
-      setIsOtpSent(true);
-      setIsLoading(false);
-      Alert.alert('सफल', 'OTP भेजा गया है');
-    }, 1000);
-  };
-
-  const verifyOtp = async () => {
-    if (otp.length !== 6) {
-      Alert.alert('त्रुटि', 'कृपया 6 अंकों का OTP डालें');
+  const handleAuth = () => {
+    if (!email || !password || (!isLogin && !name)) {
+      alert("Please fill all fields");
       return;
     }
 
-    setIsLoading(true);
-    // Simulate Firebase OTP verification
-    setTimeout(() => {
-      setIsLoading(false);
-      const mockUser = {
-        uid: 'mock-user-id',
-        phoneNumber: authMode === 'phone' ? phoneNumber : null,
-        email: authMode === 'email' ? email : null,
-        displayName: 'राम कुमार'
-      };
-      onAuthSuccess(mockUser);
-    }, 1000);
+    // dummy user
+    const user = { name: name || "User", email };
+    console.log("Authenticated user:", user);
+    onAuthSuccess(user);
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.authCard}>
-        <View style={styles.header}>
-          <Text style={styles.logo}>🌾 AgriMitra AI</Text>
-          <Text style={styles.subtitle}>किसानों का AI सहायक</Text>
-        </View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
+      <Animated.View style={[styles.card, { opacity: fadeAnim }]}>
+        <Text style={styles.title}>
+          {isLogin ? "Welcome Back 👋" : "Create Account 🌱"}
+        </Text>
 
-        {!isOtpSent ? (
-          <>
-            {/* Auth Mode Toggle */}
-            <View style={styles.authModeToggle}>
-              <TouchableOpacity
-                style={[styles.toggleButton, authMode === 'phone' && styles.activeToggle]}
-                onPress={() => setAuthMode('phone')}
-              >
-                <Ionicons name="call" size={16} color={authMode === 'phone' ? 'white' : '#6B7280'} />
-                <Text style={[styles.toggleText, authMode === 'phone' && styles.activeToggleText]}>
-                  फोन
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.toggleButton, authMode === 'email' && styles.activeToggle]}
-                onPress={() => setAuthMode('email')}
-              >
-                <Ionicons name="mail" size={16} color={authMode === 'email' ? 'white' : '#6B7280'} />
-                <Text style={[styles.toggleText, authMode === 'email' && styles.activeToggleText]}>
-                  ईमेल
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            {/* Input Field */}
-            <View style={styles.inputContainer}>
-              <Ionicons 
-                name={authMode === 'phone' ? 'call' : 'mail'} 
-                size={20} 
-                color="#6B7280" 
-                style={styles.inputIcon}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder={authMode === 'phone' ? 'फोन नंबर (+91)' : 'ईमेल पता'}
-                value={authMode === 'phone' ? phoneNumber : email}
-                onChangeText={authMode === 'phone' ? setPhoneNumber : setEmail}
-                keyboardType={authMode === 'phone' ? 'phone-pad' : 'email-address'}
-              />
-            </View>
-
-            <TouchableOpacity 
-              style={[styles.sendOtpButton, isLoading && styles.disabledButton]}
-              onPress={sendOtp}
-              disabled={isLoading}
-            >
-              {isLoading && <Text style={styles.buttonText}>भेजा जा रहा...</Text>}
-              {!isLoading && <Text style={styles.buttonText}>OTP भेजें</Text>}
-            </TouchableOpacity>
-          </>
-        ) : (
-          <>
-            {/* OTP Input */}
-            <Text style={styles.otpInfo}>
-              OTP भेजा गया है {authMode === 'phone' ? phoneNumber : email} पर
-            </Text>
-            
-            <View style={styles.inputContainer}>
-              <Ionicons name="key" size={20} color="#6B7280" style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                placeholder="6 अंकों का OTP डालें"
-                value={otp}
-                onChangeText={setOtp}
-                keyboardType="number-pad"
-                maxLength={6}
-              />
-            </View>
-
-            <TouchableOpacity 
-              style={[styles.verifyButton, isLoading && styles.disabledButton]}
-              onPress={verifyOtp}
-              disabled={isLoading}
-            >
-              {isLoading && <Text style={styles.buttonText}>सत्यापित हो रहा...</Text>}
-              {!isLoading && <Text style={styles.buttonText}>OTP सत्यापित करें</Text>}
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-              style={styles.resendButton}
-              onPress={() => setIsOtpSent(false)}
-            >
-              <Text style={styles.resendText}>दोबारा भेजें</Text>
-            </TouchableOpacity>
-          </>
+        {!isLogin && (
+          <TextInput
+            style={styles.input}
+            placeholder="Full Name"
+            placeholderTextColor="#88a38f"
+            value={name}
+            onChangeText={setName}
+          />
         )}
 
-        <Text style={styles.disclaimer}>
-          साइन इन करके आप हमारी गोपनीयता नीति और उपयोग की शर्तों से सहमत होते हैं
-        </Text>
-      </View>
-    </View>
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          placeholderTextColor="#88a38f"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          placeholderTextColor="#88a38f"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+
+        <TouchableOpacity style={styles.button} onPress={handleAuth}>
+          <Text style={styles.buttonText}>
+            {isLogin ? "Login" : "Sign Up"}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => setIsLogin(!isLogin)}>
+          <Text style={styles.toggleText}>
+            {isLogin
+              ? "Don't have an account? Sign Up"
+              : "Already have an account? Login"}
+          </Text>
+        </TouchableOpacity>
+      </Animated.View>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F0FDF4',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
+    backgroundColor: "#e8f5e9", // light greenish white
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
   },
-  authCard: {
-    backgroundColor: 'white',
-    width: '100%',
-    maxWidth: 400,
-    padding: 30,
+  card: {
+    backgroundColor: "#ffffff",
+    width: "100%",
+    maxWidth: 380,
     borderRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
-    shadowRadius: 20,
-    elevation: 10,
+    padding: 25,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
   },
-  header: {
-    alignItems: 'center',
-    marginBottom: 30,
-  },
-  logo: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#16A34A',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#6B7280',
-    textAlign: 'center',
-  },
-  authModeToggle: {
-    flexDirection: 'row',
-    backgroundColor: '#F3F4F6',
-    borderRadius: 12,
-    padding: 4,
-    marginBottom: 20,
-  },
-  toggleButton: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    borderRadius: 8,
-  },
-  activeToggle: {
-    backgroundColor: '#16A34A',
-  },
-  toggleText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#6B7280',
-    marginLeft: 6,
-  },
-  activeToggleText: {
-    color: 'white',
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F9FAFB',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-  },
-  inputIcon: {
-    marginRight: 12,
+  title: {
+    fontSize: 26,
+    fontWeight: "700",
+    color: "#2e7d32", // deep green
+    marginBottom: 25,
+    textAlign: "center",
   },
   input: {
-    flex: 1,
-    paddingVertical: 16,
+    backgroundColor: "#f1f8e9",
+    borderColor: "#c5e1a5",
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    paddingVertical: 12,
     fontSize: 16,
-    color: '#1F2937',
-  },
-  sendOtpButton: {
-    backgroundColor: '#16A34A',
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  verifyButton: {
-    backgroundColor: '#16A34A',
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
+    color: "#2e7d32",
     marginBottom: 15,
   },
-  disabledButton: {
-    backgroundColor: '#9CA3AF',
+  button: {
+    backgroundColor: "#43a047",
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: "center",
+    marginTop: 10,
   },
   buttonText: {
-    color: 'white',
+    color: "#fff",
+    fontWeight: "600",
     fontSize: 16,
-    fontWeight: '600',
   },
-  otpInfo: {
+  toggleText: {
+    color: "#2e7d32",
     fontSize: 14,
-    color: '#4B5563',
-    textAlign: 'center',
-    marginBottom: 20,
-    lineHeight: 20,
-  },
-  resendButton: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  resendText: {
-    color: '#16A34A',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  disclaimer: {
-    fontSize: 12,
-    color: '#9CA3AF',
-    textAlign: 'center',
-    lineHeight: 16,
+    textAlign: "center",
+    marginTop: 15,
   },
 });

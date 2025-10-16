@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AgriMitra-AI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ae9ff1ad53d1ddfee004302a17970ca46db097bd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+012cffeb452b6719f8deaf1648bc71a30d66d264")]
 [assembly: System.Reflection.AssemblyProductAttribute("AgriMitra-AI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AgriMitra-AI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

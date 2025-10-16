@@ -33,3 +33,32 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+# Visual Studio temporary files
+.vs/
+*.user
+*.suo
+*.vscode/
+*.vsidx
+
+# Build results
+bin/
+obj/
+out/
+
+# Node.js (frontend)
+node_modules/
+dist/
+build/
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.local
+
+# Others
+*.db
+*.sqlite
+*.db-wal
+*.db-shm
