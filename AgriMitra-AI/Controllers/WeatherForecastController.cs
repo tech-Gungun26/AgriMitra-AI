@@ -1,33 +1,37 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Http;
+using System.Threading.Tasks;
 
-namespace AgriMitra_AI.Controllers
+[ApiController]
+[Route("api/[controller]")]
+public class WeatherController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class WeatherForecastController : ControllerBase
+    private readonly HttpClient _httpClient;
+    private readonly IConfiguration _config;
+
+    public WeatherController(HttpClient httpClient, IConfiguration config)
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+        _httpClient = httpClient;
+        _config = config;
+    }
 
-        private readonly ILogger<WeatherForecastController> _logger;
-
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+    [HttpGet("{city}")]
+    public async Task<IActionResult> GetWeather(string city)
+    {
+        try
         {
-            _logger = logger;
+            var apiKey = _config["OpenWeather:ApiKey"]; // store safely in appsettings.json
+            var url = $"https://api.openweathermap.org/data/2.5/weather?q={city},IN&appid={apiKey}&units=metric&lang=hi";
+
+            var response = await _httpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            return Content(content, "application/json");
         }
-
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        catch
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+            return StatusCode(500, new { error = "Unable to fetch weather data." });
         }
     }
 }

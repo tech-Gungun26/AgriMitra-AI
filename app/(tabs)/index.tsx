@@ -54,34 +54,49 @@ export default function HomeScreen() {
   // Fetch weather data for the selected state's capital
   useEffect(() => {
     async function fetchWeather() {
-      try {
-        const city = selectedState.capital;
-        const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)},IN&appid=${OPENWEATHER_API_KEY}&units=metric&lang=hi`;
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data.main && data.weather && data.weather[0]) {
-          setWeatherData({
-            temperature: String(Math.round(data.main.temp)),
-            humidity: String(data.main.humidity),
-            condition: data.weather[0].description,
-            location: `${city}, India`,
-          });
-        } else {
-          setWeatherData({
-            temperature: '--',
-            humidity: '--',
-            condition: 'No data',
-            location: `${city}, India`,
-          });
+      const city = selectedState.capital;
+      // Try HTTPS (7107) first, then HTTP (5290) as fallback for local dev
+      const urls = [
+        `https://localhost:7107/api/Weather/${encodeURIComponent(city)}`,
+        `http://localhost:5290/api/Weather/${encodeURIComponent(city)}`,
+      ];
+
+      let lastError = null;
+      for (const url of urls) {
+        try {
+          const res = await fetch(url);
+          if (!res.ok) {
+            // capture response text for debugging
+            const text = await res.text();
+            lastError = new Error(`HTTP ${res.status} from ${url}: ${text}`);
+            continue; // try next URL
+          }
+          const data = await res.json();
+          if (data && data.main && data.weather && data.weather[0]) {
+            setWeatherData({
+              temperature: String(Math.round(data.main.temp)),
+              humidity: String(data.main.humidity),
+              condition: data.weather[0].description,
+              location: `${city}, India`,
+            });
+            return;
+          } else {
+            lastError = new Error(`Unexpected payload from ${url}`);
+            continue;
+          }
+        } catch (e) {
+          lastError = e as Error;
+          continue; // try next url
         }
-      } catch (e) {
-        setWeatherData({
-          temperature: '--',
-          humidity: '--',
-          condition: 'Error',
-          location: `${selectedState.capital}, India`,
-        });
       }
+
+      console.error('fetchWeather failed:', lastError);
+      setWeatherData({
+        temperature: '--',
+        humidity: '--',
+        condition: 'Error',
+        location: `${city}, India`,
+      });
     }
     fetchWeather();
   }, [selectedState]);
