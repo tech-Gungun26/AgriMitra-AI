@@ -62,3 +62,11 @@ build/
 *.sqlite
 *.db-wal
 *.db-shm
+# Database & cache
+*.db
+*.db-shm
+*.db-wal
+*.cache
+*.g.cs
+*.Generated*
+*.AssemblyInfoInputs.cache
