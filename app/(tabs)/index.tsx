@@ -99,7 +99,7 @@ export default function HomeScreen() {
 
   const quickActions = [
     { id: '1', title: 'पौधा स्कैन करें', icon: 'camera', screen: '/plant-analysis' },
-    { id: '2', title: 'मंडी भाव देखें', icon: 'trending-up', screen: '/mandi-prices' },
+    { id: '2', title: 'AgriMitra Bot', icon: 'chatbubbles', screen: '/agri-bot' },
     { id: '3', title: 'सरकारी योजनाएं', icon: 'document-text', screen: '/schemes' },
     { id: '4', title: 'आवाज में पूछें', icon: 'mic', action: 'voice' },
   ];
@@ -220,6 +220,8 @@ export default function HomeScreen() {
         <Ionicons name="mic" size={28} color="white" />
         <Text style={styles.voiceButtonText}>आवाज में पूछें</Text>
       </TouchableOpacity>
+
+      {/* Chatbot handled globally in layout */}
     </ScrollView>
   );
 }
@@ -459,5 +461,38 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     marginLeft: 8,
+  },
+  chatbotButton: {
+    position: 'absolute',
+    bottom: 30,
+    right: 20,
+    backgroundColor: '#0EA5A5',
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 6,
+  },
+  modalHeader: {
+    height: 64,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+    backgroundColor: 'white',
+  },
+  modalClose: {
+    padding: 8,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginLeft: 12,
+  },
+  webview: {
+    flex: 1,
+    backgroundColor: 'white',
   },
 });

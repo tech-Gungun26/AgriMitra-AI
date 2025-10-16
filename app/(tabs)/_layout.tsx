@@ -1,25 +1,29 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, Platform } from 'react-native';
 import { useState, useEffect } from 'react';
+import { WebView } from 'react-native-webview';
 
 // Farmer chatbot component that appears on every screen
-function FarmerChatbot() {
+function FarmerChatbot({ onOpen }: { onOpen: () => void }) {
   const [isVisible, setIsVisible] = useState(true);
 
-  return isVisible ? (
-    <View style={styles.chatbot}>
+  if (!isVisible) return null;
+
+  return (
+    <TouchableOpacity style={styles.chatbot} onPress={onOpen} activeOpacity={0.8}>
       <View style={styles.chatbotBubble}>
         <Text style={styles.chatbotText}>नमस्ते! मैं आपका AI सहायक हूँ</Text>
       </View>
       <View style={styles.farmerAvatar}>
         <Text style={styles.farmerEmoji}>👨‍🌾</Text>
       </View>
-    </View>
-  ) : null;
+    </TouchableOpacity>
+  );
 }
 
 export default function TabLayout() {
+  const [showChatbot, setShowChatbot] = useState(false);
   return (
     <>
       <Tabs
@@ -59,11 +63,11 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="mandi-prices"
+          name="agri-bot"
           options={{
-            title: 'मंडी भाव',
+            title: 'AgriMitra Bot',
             tabBarIcon: ({ size, color }) => (
-              <Ionicons name="trending-up" size={size} color={color} />
+              <Ionicons name="chatbubbles" size={size} color={color} />
             ),
           }}
         />
@@ -86,7 +90,28 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
-      <FarmerChatbot />
+      <FarmerChatbot onOpen={() => setShowChatbot(true)} />
+
+      {/* Chatbot Modal (global) */}
+      <Modal visible={showChatbot} animationType="slide" onRequestClose={() => setShowChatbot(false)}>
+        <View style={modalStyles.modalHeader}>
+          <TouchableOpacity onPress={() => setShowChatbot(false)} style={modalStyles.modalClose}>
+            <Ionicons name="close" size={28} color="#111827" />
+          </TouchableOpacity>
+          <Text style={modalStyles.modalTitle}>AgriMitra Chatbot</Text>
+        </View>
+        {Platform.OS === 'web' ? (
+          // Use iframe on web
+          // @ts-ignore - iframe is available on web builds
+          <iframe
+            src="https://www.chatbase.co/NIamE6SYZJd_BE3A5SiBo/help"
+            title="AgriMitra Chatbot"
+            style={{ flex: 1, width: '100%', height: '100%', border: 'none' }}
+          />
+        ) : (
+          <WebView source={{ uri: 'https://www.chatbase.co/NIamE6SYZJd_BE3A5SiBo/help' }} style={modalStyles.webview} startInLoadingState />
+        )}
+      </Modal>
     </>
   );
 }
@@ -124,5 +149,29 @@ const styles = StyleSheet.create({
   },
   farmerEmoji: {
     fontSize: 24,
+  },
+});
+
+const modalStyles = StyleSheet.create({
+  modalHeader: {
+    height: 64,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+    backgroundColor: 'white',
+  },
+  modalClose: {
+    padding: 8,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginLeft: 12,
+  },
+  webview: {
+    flex: 1,
+    backgroundColor: 'white',
   },
 });
