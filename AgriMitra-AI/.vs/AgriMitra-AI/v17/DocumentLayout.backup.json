@@ -5,10 +5,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{28CFF9EE-AF18-4777-9E72-A498EDFC2C5A}|AgriMitra-AI.csproj|c:\\users\\gungun\\documents\\ai-project\\agrimitra_ai_minorproject-1\\project\\agrimitra-ai\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{28CFF9EE-AF18-4777-9E72-A498EDFC2C5A}|AgriMitra-AI.csproj|solutionrelative:controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{28CFF9EE-AF18-4777-9E72-A498EDFC2C5A}|AgriMitra-AI.csproj|c:\\users\\gungun\\documents\\ai-project\\agrimitra_ai_minorproject-1\\project\\agrimitra-ai\\controllers\\newscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{28CFF9EE-AF18-4777-9E72-A498EDFC2C5A}|AgriMitra-AI.csproj|solutionrelative:controllers\\newscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,7 +14,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 10,
+          "SelectedChildIndex": 9,
           "Children": [
             {
               "$type": "Bookmark",
@@ -58,26 +54,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "NewsController.cs",
-              "DocumentMoniker": "C:\\Users\\Gungun\\Documents\\AI-project\\AgriMitra_AI_minorproject-1\\project\\AgriMitra-AI\\Controllers\\NewsController.cs",
-              "RelativeDocumentMoniker": "Controllers\\NewsController.cs",
-              "ToolTip": "C:\\Users\\Gungun\\Documents\\AI-project\\AgriMitra_AI_minorproject-1\\project\\AgriMitra-AI\\Controllers\\NewsController.cs",
-              "RelativeToolTip": "Controllers\\NewsController.cs",
-              "ViewState": "AgIAAFsAAAAAAAAAAAAgwGsAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-16T11:05:48.483Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 0,
               "Title": "WeatherForecastController.cs",
               "DocumentMoniker": "C:\\Users\\Gungun\\Documents\\AI-project\\AgriMitra_AI_minorproject-1\\project\\AgriMitra-AI\\Controllers\\WeatherForecastController.cs",
               "RelativeDocumentMoniker": "Controllers\\WeatherForecastController.cs",
               "ToolTip": "C:\\Users\\Gungun\\Documents\\AI-project\\AgriMitra_AI_minorproject-1\\project\\AgriMitra-AI\\Controllers\\WeatherForecastController.cs",
               "RelativeToolTip": "Controllers\\WeatherForecastController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAvAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-10-13T18:28:11.767Z",
               "EditorCaption": ""

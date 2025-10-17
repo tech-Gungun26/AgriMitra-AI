@@ -29,16 +29,70 @@ export default function FirebaseAuth({
     }).start();
   }, []);
 
-  const handleAuth = () => {
+  const handleAuth = async () => {
     if (!email || !password || (!isLogin && !name)) {
       alert("Please fill all fields");
       return;
     }
 
-    // dummy user
-    const user = { name: name || "User", email };
-    console.log("Authenticated user:", user);
-    onAuthSuccess(user);
+    try {
+      // Try HTTPS (7107) first, then HTTP (5290) as fallback for local dev
+      const urls = [
+        'https://localhost:7107/api/Auth/login',
+        'http://localhost:5290/api/Auth/login'
+      ];
+
+      let lastError = null;
+      for (const url of urls) {
+        try {
+          console.log('Attempting login at:', url);
+          
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+              email,
+              password,
+            }),
+          });
+
+          // Always try to parse the response as JSON
+          const responseData = await response.json().catch(e => {
+            console.error('JSON parse error:', e);
+            throw new Error('Invalid server response');
+          });
+
+          console.log('Server response:', responseData);
+
+          if (!response.ok) {
+            throw new Error(responseData.message || 'Authentication failed');
+          }
+
+          if (!responseData.success) {
+            throw new Error(responseData.message || 'Authentication failed');
+          }
+
+          const { data } = responseData;
+          
+          // Store the token securely (in a real app, use secure storage)
+          // localStorage.setItem('token', data.token);
+          
+          onAuthSuccess(data.user);
+          return;
+        } catch (e) {
+          lastError = e;
+          continue; // try next URL
+        }
+      }
+
+      // If we get here, no URLs succeeded
+      throw lastError;
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Login failed. Please try again.');
+    }
   };
 
   return (

@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 
 export default function PlantAnalysisScreen() {
@@ -9,40 +9,138 @@ export default function PlantAnalysisScreen() {
   const [showCamera, setShowCamera] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<any>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const cameraRef = useRef<CameraView>(null);
 
-  // Mock analysis function (replace with Vertex AI Vision)
-  const analyzeImage = async () => {
-    setIsAnalyzing(true);
-    // Simulate API call delay
-    setTimeout(() => {
-      setAnalysisResult({
-        disease: 'टमाटर का झुलसा रोग',
-        confidence: 92,
-        symptoms: [
-          'पत्तियों पर भूरे धब्बे',
-          'पत्तियों का पीला होना',
-          'फल पर काले निशान'
-        ],
-        remedies: [
-          'कॉपर सल्फेट का छिड़काव करें',
-          'प्रभावित पत्तियों को हटा दें',
-          'नीम का तेल का उपयोग करें',
-          'पानी कम दें और हवादार जगह रखें'
-        ],
-        prevention: [
-          'बीज बोने से पहले कीटाणुशोधन करें',
-          'खेत में पानी जमा न होने दें',
-          'फसल चक्रण अपनाएं'
-        ]
-      });
-      setIsAnalyzing(false);
-      setShowCamera(false);
-    }, 2000);
+  // Disease information mapping
+  const diseaseInfo: Record<string, any> = {
+    'tomato_early_blight': {
+      name: 'टमाटर का अर्ली ब्लाइट रोग',
+      symptoms: [
+        'पत्तियों पर गोल या अंडाकार भूरे धब्बे',
+        'धब्बों के चारों ओर पीला घेरा',
+        'पुरानी पत्तियां पहले प्रभावित'
+      ],
+      remedies: [
+        'कॉपर आधारित फफूंदनाशक का छिड़काव',
+        'प्रभावित पत्तियों को हटाएं',
+        'पौधों के बीच हवा का प्रवाह बढ़ाएं',
+        'सिंचाई पत्तियों पर नहीं करें'
+      ],
+      prevention: [
+        'रोग प्रतिरोधी किस्में चुनें',
+        'फसल चक्र अपनाएं',
+        'स्वच्छ खेती करें'
+      ]
+    },
+    'tomato_late_blight': {
+      name: 'टमाटर का लेट ब्लाइट रोग',
+      symptoms: [
+        'पत्तियों पर गहरे भूरे या काले धब्बे',
+        'नम मौसम में सफेद फफूंद',
+        'फल पर भूरे धब्बे'
+      ],
+      remedies: [
+        'मैंकोजेब का छिड़काव करें',
+        'अधिक पानी न दें',
+        'रोगी पौधों को नष्ट करें'
+      ],
+      prevention: [
+        'उचित जल निकासी',
+        'पौधों के बीच पर्याप्त दूरी',
+        'प्रतिरोधी किस्मों का चयन'
+      ]
+    },
+    'tomato_healthy': {
+      name: 'स्वस्थ टमाटर का पौधा',
+      symptoms: [
+        'पत्तियां हरी और स्वस्थ',
+        'कोई रोग के लक्षण नहीं',
+        'सामान्य विकास'
+      ],
+      remedies: [
+        'नियमित देखभाल जारी रखें',
+        'संतुलित पोषण दें',
+        'नियमित निरीक्षण करें'
+      ],
+      prevention: [
+        'स्वच्छ वातावरण बनाए रखें',
+        'समय पर सिंचाई करें',
+        'उचित पोषण दें'
+      ]
+    }
   };
 
-  const takePicture = () => {
-    // Mock camera capture
-    analyzeImage();
+  // Analyze image using our trained model
+  const analyzeImage = async (imageUri: string) => {
+    try {
+      setIsAnalyzing(true);
+      
+      // Create form data for image upload
+      const formData = new FormData();
+      const imageDetails = {
+        uri: imageUri,
+        type: 'image/jpeg',
+        name: 'plant_image.jpg'
+      };
+      formData.append('file', imageDetails as any);
+
+      // Make API call to our FastAPI server
+      const response = await fetch('http://localhost:8000/predict/', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      const result = await response.json();
+
+      if (result.error) {
+        Alert.alert('Error', 'Failed to analyze image. Please try again.');
+        return;
+      }
+
+      // Map the prediction to Hindi information
+      const disease = result.prediction;
+      const confidence = Math.round(result.confidence * 100);
+      const diseaseDetails = diseaseInfo[disease] || {
+        name: disease,
+        symptoms: ['Information not available'],
+        remedies: ['Information not available'],
+        prevention: ['Information not available']
+      };
+
+      setAnalysisResult({
+        disease: diseaseDetails.name,
+        confidence: confidence,
+        symptoms: diseaseDetails.symptoms,
+        remedies: diseaseDetails.remedies,
+        prevention: diseaseDetails.prevention
+      });
+
+    } catch (error) {
+      console.error('Error analyzing image:', error);
+      Alert.alert('Error', 'Failed to analyze image. Please check your internet connection and try again.');
+    } finally {
+      setIsAnalyzing(false);
+      setShowCamera(false);
+    }
+  };
+
+  const takePicture = async () => {
+    try {
+      const photo = await cameraRef.current?.takePictureAsync({
+        quality: 0.8,
+        base64: false,
+      });
+      
+      if (photo?.uri) {
+        analyzeImage(photo.uri);
+      }
+    } catch (error) {
+      console.error('Error taking picture:', error);
+      Alert.alert('Error', 'Failed to take picture. Please try again.');
+    }
   };
 
   if (showCamera) {
@@ -63,7 +161,7 @@ export default function PlantAnalysisScreen() {
 
     return (
       <View style={styles.container}>
-        <CameraView style={styles.camera} facing={facing}>
+        <CameraView ref={cameraRef} style={styles.camera} facing={facing}>
           <View style={styles.cameraControls}>
             <TouchableOpacity 
               style={styles.captureButton}
