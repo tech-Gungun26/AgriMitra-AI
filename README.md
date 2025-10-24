@@ -70,6 +70,13 @@ AgriMitra AI is a comprehensive agricultural assistance platform built with Reac
 - Query and response archival
 - Timestamp-based organization
 
+
+### 5. AgriBot
+- chatbase trained AI chatbot
+- Replies like a farmer assistant
+- multilingual bot. 
+
+
 ## Technical Stack
 
 ### Frontend
@@ -109,10 +116,9 @@ project/
 │   ├── index.tsx            # Entry point
 │   └── (tabs)/              # Tab-based navigation
 │       ├── index.tsx        # Home screen
-│       ├── mandi-prices.tsx # Market prices
 │       ├── plant-analysis.tsx # Disease detection
+        ├──agri-bot.tsx # chatbot trained 
 │       ├── profile.tsx      # User profile
-│       └── schemes.tsx      # Government schemes
 ├── assets/
 │   └── images/              # App images and icons
 ├── components/
@@ -197,7 +203,8 @@ The AI server will be available at `http://localhost:8000` with the following en
 ## API Keys and Configuration
 The following APIs are used and should be configured in appsettings.json:
 - OpenWeather API
-- News API
+- chatbase API
+- login API
 - JWT Configuration
 
 ## Environment Variables
@@ -232,10 +239,10 @@ Backend (appsettings.json):
 ## Current Status
 - ✅ Authentication system implemented
 - ✅ AgriMitra Bot integration complete
-- ✅ News feed with backend proxy
 - ✅ Basic user management
-- 🚧 Weather information system
+- ✅ Weather information system
 - 🚧 Additional features in planning
+- 🚧 Plant analysis
 
 ## Testing
 ### Test User Credentials
@@ -256,3 +263,4 @@ Backend (appsettings.json):
 3. Market price predictions
 4. Community forum
 5. Expert consultation system
+6. Plant analysis using picture

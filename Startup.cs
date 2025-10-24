@@ -16,7 +16,7 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
-        
+
         // Add CORS
         services.AddCors(options =>
         {
@@ -27,6 +27,10 @@ public class Startup
                        .AllowAnyHeader();
             });
         });
+        app.UseCors(policy =>
+    policy.WithOrigins("http://192.168.1.47:19000")
+          .AllowAnyHeader()
+          .AllowAnyMethod());
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

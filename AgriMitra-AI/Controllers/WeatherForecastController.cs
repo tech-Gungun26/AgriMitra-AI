@@ -21,7 +21,7 @@ public class WeatherController : ControllerBase
         try
         {
             var apiKey = _config["OpenWeather:ApiKey"]; // store safely in appsettings.json
-            var url = $"https://api.openweathermap.org/data/2.5/weather?q={city},IN&appid={apiKey}&units=metric&lang=hi";
+            var url = $"http://api.openweathermap.org/data/2.5/weather?q={city},IN&appid={apiKey}&units=metric&lang=hi";
 
             var response = await _httpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();

@@ -37,7 +37,7 @@ const STATES = [
   { state: 'Himachal Pradesh', capital: 'Shimla' }
 ];
 
-const OPENWEATHER_API_KEY = '1da9489476bac5fcfe9bf72ed4c0bf4c'; // <-- Your actual OpenWeatherMap API key
+const OPENWEATHER_API_KEY = '1da9489476bac5fcfe9bf72ed4c0bf4c'; // <--  actual OpenWeatherMap API key
 
 export default function HomeScreen() {
   const [selectedState, setSelectedState] = useState(STATES[0]);

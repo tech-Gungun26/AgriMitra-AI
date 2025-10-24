@@ -8,9 +8,9 @@ import Constants from 'expo-constants';
 const API_URL = __DEV__ 
   ? Platform.select({
       // Use localhost for web
-      web: 'https://localhost:7107',
+      web: 'http://localhost:7107',
       // Use computer's IP for mobile dev
-      default: 'https://192.168.1.47:7107', 
+      default: 'http://192.168.1.47:7107', 
     })
   : 'https://your-production-api.com'; // Replace with your production API
 
